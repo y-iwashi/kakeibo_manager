@@ -1,0 +1,195 @@
+/* レイアウト基本 */
+/* bodyの余白を消して画面いっぱいに使う */
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* body自体のスクロールは禁止 */
+}
+
+/* ヘッダーのデザイン */
+.app-header {
+    background: #2c3e50; /* 濃い紺色 */
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* メイン部分を可変にする */
+.app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    overflow: hidden; /* 子要素のtable-containerにスクロールを任せる */
+}
+
+/* フッターのデザイン */
+.app-footer {
+    background: #ecf0f1; /* 薄いグレー */
+    border-top: 1px solid #bdc3c7;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.footer-stats {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* table-containerの微調整 */
+.table-container {
+    flex: 1;
+    overflow: auto;
+    border: 1px solid #ccc;
+    background: white;
+}
+
+/* 検索エリア */
+.search-accordion {
+    background: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.search-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 0;
+    max-width: 600px;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+}
+
+.search-item label {
+    width: 120px;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.search-item input:not([type="checkbox"]) {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+}
+
+/* テーブルエリア */
+.table-container {
+    flex: 1;
+    overflow: auto;
+    border: 1px solid #ccc;
+}
+
+table {
+    width: max-content;
+    min-width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* ヘッダー固定・デザイン */
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 40px;
+    background: #333;
+    color: white;
+    padding: 0;
+    border-bottom: 2px solid #444;
+}
+
+/* 各列の初期幅（お好みのサイズに調整してください） */
+th[data-key="id"]          { width: 60px; }
+th[data-key="date"]        { width: 110px; }
+th[data-key="shop"]        { width: 180px; }
+th[data-key="amount"]      { width: 60px; }
+th[data-key="category"]    { width: 120px; }
+th[data-key="member"]      { width: 70px; }
+th[data-key="is_closed"]   { width: 60px; }
+th[data-key="memo"]        { width: 250px; }
+th[data-key="source_file"] { width: 100px; }
+
+/* テキストが溢れた場合に「...」にする設定（既にある場合は確認のみ） */
+td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ソートUI */
+.sort-wrapper {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    height: 100%;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sort-wrapper:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sort-icon {
+    display: inline-block;
+    width: 15px;
+    margin-left: 5px;
+    font-size: 0.7rem;
+    color: #888;
+    text-align: center;
+}
+
+.sort-icon::after {
+    content: "⇅";
+}
+
+th.sort-asc .sort-icon::after {
+    content: "▲";
+    color: #fff;
+}
+
+th.sort-desc .sort-icon::after {
+    content: "▼";
+    color: #fff;
+}
+
+/* リサイザー */
+.resizer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 20;
+}
+
+.resizer:hover {
+    background: #007bff;
+}
