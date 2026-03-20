@@ -60,6 +60,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-bottom: 10px;
+    z-index: 100; /* プルダウンが隠れないように */
 }
 
 .search-list {
@@ -73,6 +74,7 @@ body {
 .search-item {
     display: flex;
     align-items: center;
+    overflow: visible; /* プルダウンがはみ出しても見えるように */
 }
 
 .search-item label {
@@ -94,6 +96,12 @@ body {
     align-items: center;
     gap: 5px;
     flex: 1;
+}
+
+/* Virtual Selectの幅を他の入力欄と合わせる */
+.vscomp-wrapper {
+    flex: 1;
+    max-width: 100%;
 }
 
 /* テーブルエリア */
@@ -122,7 +130,7 @@ thead th {
     border-bottom: 2px solid #444;
 }
 
-/* 各列の初期幅（お好みのサイズに調整してください） */
+/* 各列の初期幅（お好みのサイズに調整） */
 th[data-key="id"]          { width: 60px; }
 th[data-key="date"]        { width: 110px; }
 th[data-key="shop"]        { width: 180px; }
@@ -170,12 +178,12 @@ td {
 }
 
 th.sort-asc .sort-icon::after {
-    content: "▲";
+    content: "↑";
     color: #fff;
 }
 
 th.sort-desc .sort-icon::after {
-    content: "▼";
+    content: "↓";
     color: #fff;
 }
 

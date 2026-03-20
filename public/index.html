@@ -2,19 +2,22 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>DB管理システム</title>
+    <title>kakeibo manager</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="app-header">
-        <div class="header-title">kakeibo manager v1.0</div>
+        <div class="header-title">kakeibo manager</div>
     </header>
 
     <main class="app-main">
         <details class="search-accordion" open>
+
             <summary>検索条件</summary>
+
             <div class="search-list">
+
                 <div class="search-item">
                     <label>ID範囲</label>
                     <div class="input-group">
@@ -23,6 +26,7 @@
                         <input type="number" id="search-id-max" placeholder="最大">
                     </div>
                 </div>
+
                 <div class="search-item">
                     <label>日付範囲</label>
                     <div class="input-group">
@@ -31,6 +35,7 @@
                         <input type="date" id="search-date-to">
                     </div>
                 </div>
+
                 <div class="search-item">
                     <label>金額範囲</label>
                     <div class="input-group">
@@ -39,10 +44,27 @@
                         <input type="number" id="search-amount-max" placeholder="最大">
                     </div>
                 </div>
+
                 <div class="search-item"><label>店舗名</label><input type="text" id="search-shop"></div>
-                <div class="search-item"><label>カテゴリ</label><input type="text" id="search-category"></div>
-                <div class="search-item"><label>メンバー</label><input type="text" id="search-member"></div>
-                <div class="search-item"><label>ファイル</label><input type="text" id="search-source-file"></div>
+
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/virtual-select-plugin@latest/dist/virtual-select.min.css">
+                <script src="https://cdn.jsdelivr.net/npm/virtual-select-plugin@latest/dist/virtual-select.min.js"></script>
+
+                <div class="search-item">
+                    <label>カテゴリ</label>
+                    <div id="search-category"></div>
+                </div>
+
+                <div class="search-item">
+                    <label>メンバー</label>
+                    <div id="search-member"></div>
+                </div>
+
+                <div class="search-item">
+                    <label>ファイル</label>
+                    <div id="search-source-file"></div>
+                </div>
+
                 <div class="search-item"><label>メモ</label><input type="text" id="search-memo"></div>
 
                 <div class="search-item">
@@ -68,7 +90,7 @@
                         <th data-key="member"><span class="sort-wrapper"><span class="sort-label">メンバー</span><span class="sort-icon"></span></span></th>
                         <th data-key="is_closed"><span class="sort-wrapper"><span class="sort-label">完了</span><span class="sort-icon"></span></span></th>
                         <th data-key="memo"><span class="sort-wrapper"><span class="sort-label">メモ</span><span class="sort-icon"></span></span></th>
-                        <th data-key="source_file"><span class="sort-wrapper"><span class="sort-label">元ファイル</span><span class="sort-icon"></span></span></th>
+                        <th data-key="source_file"><span class="sort-wrapper"><span class="sort-label">ファイル</span><span class="sort-icon"></span></span></th>
                     </tr>
                 </thead>
                 <tbody id="table-body"></tbody>

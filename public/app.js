@@ -42,18 +42,26 @@ function filterAndSortData() {
         aMin: document.getElementById('search-amount-min').value,
         aMax: document.getElementById('search-amount-max').value,
         shop: document.getElementById('search-shop').value.toLowerCase(),
-        category: document.getElementById('search-category').value.toLowerCase(),
-        member: document.getElementById('search-member').value.toLowerCase(),
-        source: document.getElementById('search-source-file').value.toLowerCase(),
+
+        // Virtual Selectからは選択された値の「配列」が返ってくる
+        members: document.querySelector('#search-member').value, 
+        categories: document.querySelector('#search-category').value,
+        sourceFiles: document.querySelector('#search-source-file').value,
+
         memo: document.getElementById('search-memo').value.toLowerCase(),
         isClosed: document.getElementById('search-is-not-closed').checked
     };
 
-    // 1. 絞り込み
+    // 絞り込み
     let filtered = allData.filter(row => {
         const id = Number(row.id);
         const d = row.date ? new Date(row.date) : null;
         const amt = Number(row.amount);
+
+        // 複数選択の判定：何も選ばれていない(配列空)ならパス。選ばれていれば含まれるかチェック。
+        const matchMember = filters.members.length === 0 || filters.members.includes(row.member);
+        const matchCategory = filters.categories.length === 0 || filters.categories.includes(row.category);
+        const matchSourceFile = filters.sourceFiles.length === 0 || filters.sourceFiles.includes(row.source_file);
 
         return (
             (!filters.idMin || id >= Number(filters.idMin)) &&
@@ -63,15 +71,17 @@ function filterAndSortData() {
             (!filters.aMin || amt >= Number(filters.aMin)) &&
             (!filters.aMax || amt <= Number(filters.aMax)) &&
             (row.shop || '').toLowerCase().includes(filters.shop) &&
-            (row.category || '').toLowerCase().includes(filters.category) &&
-            (row.member || '').toLowerCase().includes(filters.member) &&
-            (row.source_file || '').toLowerCase().includes(filters.source) &&
+
+            matchMember &&
+            matchCategory &&
+            matchSourceFile &&
+
             (row.memo || '').toLowerCase().includes(filters.memo) &&
             (!filters.isClosed || row.is_closed === false)
         );
     });
 
-    // 2. ソート
+    // ソート
     if (sortConfig.key) {
         filtered.sort((a, b) => {
             let valA = a[sortConfig.key];
@@ -151,23 +161,100 @@ function initTableFeatures() {
     });
 }
 
+/*************************************************************************************
+ * マスタデータ（メンバー・カテゴリ・ソースファイル）を読み込んでプルダウンを生成
+ ************************************************************************************/
+async function loadMasterData() {
+    try {
+        const [resMem, resCat, resSourceFile] = await Promise.all([
+            fetch('/api/members'),
+            fetch('/api/categories'),
+            fetch('/api/source_file')
+        ]);
+        const members = await resMem.json();
+        const categories = await resCat.json();
+        const sourceFiles = await resSourceFile.json();
+
+        // Virtual Selectの初期化
+        VirtualSelect.init({
+            ele: '#search-member',
+            options: members.map(m => ({ label: m.name, value: m.name })),
+            multiple: true,           // 複数選択を有効に
+            placeholder: 'すべて',    // 未選択時の表示
+            search: false,             // 検索窓を出す
+            selectAllText: '全選択',  // 全選択ボタンのテキスト
+            allOptionsSelectedText: 'すべて', 
+        });
+
+        VirtualSelect.init({
+            ele: '#search-category',
+            options: categories.map(c => ({ label: c.name, value: c.name })),
+            multiple: true,           // 複数選択を有効に
+            placeholder: 'すべて',    // 未選択時の表示
+            search: false,             // 検索窓を出す
+            selectAllText: '全選択',  // 全選択ボタンのテキスト
+            allOptionsSelectedText: 'すべて',
+        });
+
+        VirtualSelect.init({
+            ele: '#search-source-file',
+            options: sourceFiles.map(f => ({ label: f.source_file, value: f.source_file })),
+            multiple: true,           // 複数選択を有効に
+            placeholder: 'すべて',    // 未選択時の表示
+            search: false,             // 検索窓を出す
+            selectAllText: '全選択',  // 全選択ボタンのテキスト
+            allOptionsSelectedText: 'すべて',
+        });
+        
+        // 変更時にフィルタを実行するようにイベント設定
+        document.querySelector('#search-member').addEventListener('change', filterAndSortData);
+        document.querySelector('#search-category').addEventListener('change', filterAndSortData);
+        document.querySelector('#search-source-file').addEventListener('change', filterAndSortData);
+
+    } catch (err) {
+        console.error('マスタデータの取得に失敗:', err);
+    }
+}
+
+/*************************************************************************************
+ * データの初回読み込み処理
+ ************************************************************************************/
+async function loadInitialData() {
+    try {
+        const res = await fetch('/api/rows');
+        allData = await res.json();
+        filterAndSortData(); // 描画と統計更新
+    } catch (err) {
+        alert('初期データの取得に失敗しました');
+    }
+}
+
 // 起動時処理
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
     initTableFeatures();
 
-    // 検索条件の変更を監視
-    const filterIds = ['search-id-min', 'search-id-max', 'search-date-from', 'search-date-to', 'search-amount-min', 'search-amount-max', 'search-shop', 'search-category', 'search-member', 'search-source-file', 'search-memo', 'search-is-not-closed'];
+    // プルダウンの準備
+    await loadMasterData();
+
+    // 検索条件のイベント登録
+    const filterIds = [
+        'search-id-min', 'search-id-max', 'search-date-from', 'search-date-to', 
+        'search-amount-min', 'search-amount-max', 'search-shop', 
+        'search-category', 'search-member', 'search-source-file', 'search-memo', 
+        'search-is-not-closed'
+    ];
+
+    // 各フィルタ要素にイベントリスナーを追加
     filterIds.forEach(id => {
         const el = document.getElementById(id);
-        el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', filterAndSortData);
+        // select要素も'change'または'input'イベントで検知可能
+        const eventType = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
+        el.addEventListener(eventType, filterAndSortData);
     });
 
-    // 取得ボタン
-    document.getElementById('load-btn').addEventListener('click', async () => {
-        try {
-            const res = await fetch('/api/rows');
-            allData = await res.json();
-            filterAndSortData();
-        } catch (err) { alert('取得失敗'); }
-    });
+    // 初期表示データの取得
+    await loadInitialData();
+
+    // 取得ボタン（手動更新用）
+    document.getElementById('load-btn').addEventListener('click', loadInitialData);
 });

@@ -22,6 +22,36 @@ app.get('/api/rows', async (req, res) => {
   }
 });
 
+// メンバー一覧を取得するAPI
+app.get('/api/members', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, name FROM members_member ORDER BY id ASC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// カテゴリ一覧を取得するAPI
+app.get('/api/categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, name FROM transactions_category ORDER BY id ASC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ファイル一覧を取得するAPI
+app.get('/api/source_file', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT source_file FROM transactions_transaction ORDER BY source_file DESC;');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 3. サーバー起動
 const PORT = 3000;
 app.listen(PORT, () => {
