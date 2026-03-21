@@ -3,14 +3,14 @@ const pool = require('./src/lib/db');
 const app = express();
 const path = require('path');
 
-// 1. publicフォルダ内のファイルをそのままブラウザに公開する設定
+// publicフォルダ内のファイルをそのままブラウザに公開する設定
 app.use(express.static('public'));
 
-// 2. ブラウザから呼ばれる「API」のルート
+// ブラウザから呼ばれる「API」のルート
 app.get('/api/rows', async (req, res) => {
   try {
-    // テーブル名に合わせて変更
-    const result = await pool.query('select t1.id, t1.date, t1.shop, t1.amount, t3.name as member, t2.Name as category, t1.memo, t1.source_file, t1.is_closed from transactions_transaction t1 inner join transactions_category t2 on t1.category_id = t2.id inner join members_member t3 on t1.member_id = t3.id order by t1.id');
+    // 日付、店舗、金額、メンバー名、カテゴリ名、メモ、元ファイル名、クローズフラグを取得するクエリ
+    const result = await pool.query('SELECT t1.id, t1.date, t1.shop, t1.amount, t3.name AS member, t2.Name as category, t1.memo, t1.source_file, t1.is_closed FROM transactions_transaction t1 INNER JOIN transactions_category t2 ON t1.category_id = t2.id INNER JOIN members_member t3 ON t1.member_id = t3.id ORDER BY t1.id DESC;');
 
     // console.log(result.rows);
 
@@ -25,7 +25,8 @@ app.get('/api/rows', async (req, res) => {
 // メンバー一覧を取得するAPI
 app.get('/api/members', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name FROM members_member ORDER BY id ASC');
+    // メンバーIDとメンバー名称を取得するクエリ
+    const result = await pool.query('SELECT id, name FROM members_member ORDER BY id ASC;');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -35,7 +36,8 @@ app.get('/api/members', async (req, res) => {
 // カテゴリ一覧を取得するAPI
 app.get('/api/categories', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, name FROM transactions_category ORDER BY id ASC');
+    // カテゴリ名称を出現頻度順で取得するクエリ
+    const result = await pool.query('SELECT t2.category_id, t3.name, t2.count FROM( SELECT t1.category_id, count(t1.category_id) AS count FROM transactions_transaction t1 GROUP BY category_id ) t2 LEFT JOIN transactions_category t3 ON t2.category_id = t3.id ORDER BY t2.count DESC;');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -45,6 +47,7 @@ app.get('/api/categories', async (req, res) => {
 // ファイル一覧を取得するAPI
 app.get('/api/source_file', async (req, res) => {
   try {
+    // 元ファイル名のリストを降順（新しい順）で取得するクエリ
     const result = await pool.query('SELECT DISTINCT source_file FROM transactions_transaction ORDER BY source_file DESC;');
     res.json(result.rows);
   } catch (err) {
@@ -52,7 +55,7 @@ app.get('/api/source_file', async (req, res) => {
   }
 });
 
-// 3. サーバー起動
+// サーバー起動
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running: http://localhost:${PORT}`);
