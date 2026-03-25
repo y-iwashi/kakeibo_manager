@@ -12,7 +12,7 @@ function renderTable(data) {
         const tr = document.createElement('tr');
         const date = row.date ? new Date(row.date).toLocaleDateString('ja-JP') : '';
         const amount = Number(row.amount).toLocaleString();
-        const closedStatus = row.is_closed ? '✅' : 'ー';
+        const closedStatus = row.is_closed ? '☑' : 'ー';
 
         tr.innerHTML = `
             <td>${row.id}</td>
@@ -132,6 +132,53 @@ function updateFooterStats(data) {
     sumEl.textContent = `¥${totalAmount.toLocaleString()}`;
 }
 
+/****************************************************************************************
+ * アコーディオンの初期化とイベント設定
+ ***************************************************************************************/
+function initAccordion() {
+    const details = document.querySelector('.search-accordion'); // 1つしかない前提で取得
+    const summary = details.querySelector('summary');            // summary要素
+    const content = details.querySelector('.search-content');    // アコーディオンの内容エリア
+    const inner = details.querySelector('.search-inner');        // 内容エリアの内側（余白部分）
+
+    // 初期状態のセット（閉じている場合）
+    if (!details.open) {
+        content.style.gridTemplateRows = '0fr';
+        inner.style.overflow = 'hidden';
+    }
+
+    summary.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // すでに開いている場合は閉じる、閉じている場合は開く
+        if (details.open) {
+            // --- 閉じる時 ---
+            inner.style.overflow = 'hidden'; // 閉じ始める瞬間に隠す
+            content.style.gridTemplateRows = '0fr';
+            
+            setTimeout(() => {
+                details.open = false;
+            }, 500);
+
+        } else {
+            // --- 開く時 ---
+            details.open = true;
+            inner.style.overflow = 'hidden'; // アニメーション中は隠す
+            
+            requestAnimationFrame(() => {
+                content.style.gridTemplateRows = '1fr';
+            });
+
+            // アニメーション完了後(0.5s後)に、プルダウンがはみ出せるようにする
+            setTimeout(() => {
+                if (details.open) {
+                    inner.style.overflow = 'visible';
+                }
+            }, 500);
+        }
+    });
+}
+
 /*************************************************************************************
  * カラムリサイズとソートイベントの初期化
  ************************************************************************************/
@@ -231,7 +278,10 @@ async function loadInitialData() {
 
 // 起動時処理
 window.addEventListener('DOMContentLoaded', async () => {
-    initTableFeatures();
+
+    initTableFeatures(); // カラムリサイズとソートイベントの初期化
+
+    initAccordion(); // アコーディオン初期化を追加
 
     // プルダウンの準備
     await loadMasterData();
@@ -256,5 +306,5 @@ window.addEventListener('DOMContentLoaded', async () => {
     await loadInitialData();
 
     // 取得ボタン（手動更新用）
-    document.getElementById('load-btn').addEventListener('click', loadInitialData);
+    // document.getElementById('load-btn').addEventListener('click', loadInitialData);
 });

@@ -1,4 +1,3 @@
-/* レイアウト基本 */
 /* bodyの余白を消して画面いっぱいに使う */
 body {
     font-family: sans-serif;
@@ -45,14 +44,6 @@ body {
     color: #2c3e50;
 }
 
-/* table-containerの微調整 */
-.table-container {
-    flex: 1;
-    overflow: auto;
-    border: 1px solid #ccc;
-    background: white;
-}
-
 /* 検索エリア */
 .search-accordion {
     background: #f9f9f9;
@@ -60,15 +51,38 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-bottom: 10px;
-    z-index: 100; /* プルダウンが隠れないように */
+    z-index: 100; /* プルダウンが隠れない対策 */
+    overflow: hidden;
+    position: relative; /* z-indexを有効にするために必須 */
+}
+
+/* アコーディオンが開いている時だけ、中身をはみ出しても見えるようにする */
+.search-accordion[open] {
+    overflow: visible;
 }
 
 .search-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 10px 0;
-    max-width: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 50%ずつの2列 */
+    gap: 12px 40px;
+    padding: 15px 0;
+    max-width: 900px; /* 2カラムに合わせて少し広げる */
+}
+
+/* 未クローズのみ（チェックボックス）を全幅にする */
+.checkbox-item {
+    grid-column: 1 / -1; /* 1列目から最後まで繋げる */
+}
+
+/* アニメーション */
+.search-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-out;
+}
+
+.search-inner {
+    min-height: 0; 
 }
 
 .search-item {
@@ -98,6 +112,11 @@ body {
     flex: 1;
 }
 
+/* チェックボックス項目を2列分ぶち抜く設定 */
+.checkbox-item {
+    grid-column: 1 / -1;
+}
+
 /* Virtual Selectの幅を他の入力欄と合わせる */
 .vscomp-wrapper {
     flex: 1;
@@ -109,6 +128,7 @@ body {
     flex: 1;
     overflow: auto;
     border: 1px solid #ccc;
+    background: white;
 }
 
 table {

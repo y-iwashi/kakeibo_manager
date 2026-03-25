@@ -12,68 +12,76 @@
     </header>
 
     <main class="app-main">
-        <details class="search-accordion" open>
+        <details class="search-accordion">
 
             <summary>検索条件</summary>
 
-            <div class="search-list">
+            <div class="search-content">
+                <div class="search-inner">
 
-                <div class="search-item">
-                    <label>ID範囲</label>
-                    <div class="input-group">
-                        <input type="number" id="search-id-min" placeholder="最小">
-                        <span>〜</span>
-                        <input type="number" id="search-id-max" placeholder="最大">
+                    <div class="search-list">
+
+                        <div class="search-item">
+                            <label>ID範囲</label>
+                            <div class="input-group">
+                                <input type="number" id="search-id-min" placeholder="最小">
+                                <span>〜</span>
+                                <input type="number" id="search-id-max" placeholder="最大">
+                            </div>
+                        </div>
+
+                        <div class="search-item">
+                            <label>日付範囲</label>
+                            <div class="input-group">
+                                <input type="date" id="search-date-from">
+                                <span>〜</span>
+                                <input type="date" id="search-date-to">
+                            </div>
+                        </div>
+
+                        <div class="search-item">
+                            <label>金額範囲</label>
+                            <div class="input-group">
+                                <input type="number" id="search-amount-min" placeholder="最小">
+                                <span>〜</span>
+                                <input type="number" id="search-amount-max" placeholder="最大">
+                            </div>
+                        </div>
+
+                        <div class="search-item"><label>店舗名</label><input type="text" id="search-shop"></div>
+
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/virtual-select-plugin@latest/dist/virtual-select.min.css">
+                        <script src="https://cdn.jsdelivr.net/npm/virtual-select-plugin@latest/dist/virtual-select.min.js"></script>
+
+                        <div class="search-item">
+                            <label>カテゴリ</label>
+                            <div id="search-category"></div>
+                        </div>
+
+                        <div class="search-item">
+                            <label>メンバー</label>
+                            <div id="search-member"></div>
+                        </div>
+
+                        <div class="search-item">
+                            <label>ファイル</label>
+                            <div id="search-source-file"></div>
+                        </div>
+
+                        <div class="search-item"><label>メモ</label><input type="text" id="search-memo"></div>
+
+                        <div class="search-item">
+                            <label for="search-is-not-closed">未クローズのみ</label>
+                            <input type="checkbox" id="search-is-not-closed">
+                        </div>
+
                     </div>
+
+                    <!-- <button id="load-btn">最新データを取得</button> -->
+
                 </div>
-
-                <div class="search-item">
-                    <label>日付範囲</label>
-                    <div class="input-group">
-                        <input type="date" id="search-date-from">
-                        <span>〜</span>
-                        <input type="date" id="search-date-to">
-                    </div>
-                </div>
-
-                <div class="search-item">
-                    <label>金額範囲</label>
-                    <div class="input-group">
-                        <input type="number" id="search-amount-min" placeholder="最小">
-                        <span>〜</span>
-                        <input type="number" id="search-amount-max" placeholder="最大">
-                    </div>
-                </div>
-
-                <div class="search-item"><label>店舗名</label><input type="text" id="search-shop"></div>
-
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/virtual-select-plugin@latest/dist/virtual-select.min.css">
-                <script src="https://cdn.jsdelivr.net/npm/virtual-select-plugin@latest/dist/virtual-select.min.js"></script>
-
-                <div class="search-item">
-                    <label>カテゴリ</label>
-                    <div id="search-category"></div>
-                </div>
-
-                <div class="search-item">
-                    <label>メンバー</label>
-                    <div id="search-member"></div>
-                </div>
-
-                <div class="search-item">
-                    <label>ファイル</label>
-                    <div id="search-source-file"></div>
-                </div>
-
-                <div class="search-item"><label>メモ</label><input type="text" id="search-memo"></div>
-
-                <div class="search-item">
-                    <label for="search-is-not-closed">未クローズのみ</label>
-                    <input type="checkbox" id="search-is-not-closed">
-                </div>
-
             </div>
-            <button id="load-btn">最新データを取得</button>
+
         </details>
 
         <hr>
@@ -103,7 +111,7 @@
             表示件数: <span id="stat-count">0</span> 件 / 
             合計金額: <span id="stat-sum">¥0</span>
         </div>
-        <div class="footer-copy">&copy; 2026 https://github.com/y-iwashi</div>
+        <div class="footer-copy">&copy; 2026 y-iwashi (PuriPuriGames) &emsp;<a href="https://github.com/y-iwashi">GitHub</a></div>
     </footer>
 
     <script src="app.js"></script>
