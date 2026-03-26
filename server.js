@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const pool = require('./src/lib/db');
 const app = express();
@@ -55,8 +56,8 @@ app.get('/api/source_file', async (req, res) => {
   }
 });
 
-// サーバー起動
-const PORT = 3000;
+// ポート番号も環境変数から取得（なければ3000）
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running: http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
