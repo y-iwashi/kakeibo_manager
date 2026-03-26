@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"  # PCの3000番を、コンテナの3000番に繋ぐ
+    env_file:
+      - .env         # 手元の .env ファイルの内容をコンテナに流し込む
